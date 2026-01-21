@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "orders")  // 애는 왜 colum이 아니라 table임?? member는 왜 talble 안 붙임??
+@Table(name = "orders")
 @Getter @Setter
 public class Order {
     @Id @GeneratedValue
