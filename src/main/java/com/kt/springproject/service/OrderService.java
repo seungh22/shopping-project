@@ -8,6 +8,7 @@ import com.kt.springproject.domain.item.Item;
 import com.kt.springproject.repository.ItemRepository;
 import com.kt.springproject.repository.MemberRepository;
 import com.kt.springproject.repository.OrderRepository;
+import com.kt.springproject.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +65,7 @@ public class OrderService {
     /**
      * 검색
      */
-//    public List<Order> findOrder(OrderSearch orderSearch){
-//        return orderRepository.findAll(orderSearch);
-//    }
+    public List<Order> findOrders(OrderSearch orderSearch){
+        return orderRepository.findAllByString(orderSearch);
+    }
 }
