@@ -3,12 +3,11 @@ package com.kt.springproject.api;
 import com.kt.springproject.domain.Member;
 import com.kt.springproject.service.MemberService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.AbstractPersistable_;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
@@ -31,6 +30,7 @@ public class MemberApiController {
     // => API를 만들때 항상 엔티티를 파라미터로 받지 말고, 외부에 노출하지 말자
 
     /**
+     * 회원 등록 API
      * V2: 요청 값으로 Member 엔티티 대신에 별도의 DTO를 받는다
      */
     @PostMapping("/api/v2/members")
@@ -40,6 +40,31 @@ public class MemberApiController {
 
         Long id = memberService.join(member);
         return new CreateMemberResponse(id);
+    }
+
+    /**
+     * 회원 수정 API
+     */
+    @PutMapping("/api/v2/members/{id}")
+    public UpdateMemberResponse updateMemberV2(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid UpdateMemberRequest request) {
+
+        Member findMember = memberService.findOne(id);
+        memberService.update(id, request.getName());    // 수정은 왠만하면 더티 체킹으롱
+        return new UpdateMemberResponse(findMember.getId(), findMember.getName());  // @AllArgsConstructor을 썼기 때문에 모든 파라미터를 넘기는 생성자가 필요
+    }
+
+    @Data
+    static class UpdateMemberRequest {
+                private String name;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class UpdateMemberResponse {
+        private Long id;
+        private String name;
     }
 
     @Data

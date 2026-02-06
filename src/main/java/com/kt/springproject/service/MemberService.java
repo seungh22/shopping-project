@@ -63,4 +63,11 @@ public class MemberService {
     public Member findOne(Long memberId) {
         return memberRepository.findOne(memberId);
     }
+
+    // 트랜잭션이 시작되면 jpa가 영속성 컨택스트에 id를 찾을텐데 없으면 DB에서 끌고 옴
+    @Transactional
+    public void update(Long id, String name) {
+        Member member = memberRepository.findOne(id);
+        member.setName(name);
+    }
 }
