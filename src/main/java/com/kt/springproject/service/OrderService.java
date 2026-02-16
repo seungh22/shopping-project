@@ -65,6 +65,7 @@ public class OrderService {
     /**
      * 검색
      */
+    // todo: 주문 조회 결과를 대표상품 1개가 아니라 모든 주문상품을 DTO 리스트로 반환하도록 변
     public List<Order> findOrders(OrderSearch orderSearch){
         return orderRepository.findAllByString(orderSearch);
     }

@@ -27,6 +27,7 @@ public class OrderRepository {
     }
 
     //todo: querydls로 수정
+    //todo: orderItems 전체를 포함한 DTO로 변환해 내려주고, fetch join으로 N+1 방
     public List<Order> findAll(OrderSearch orderSearch) {
 
         //language=JPAQL
