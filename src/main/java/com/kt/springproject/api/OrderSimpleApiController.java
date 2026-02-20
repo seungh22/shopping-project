@@ -31,7 +31,7 @@ public class OrderSimpleApiController {
         List<Order> all = orderRepository.findAllByString(new OrderSearch());
         for (Order order : all) {
             order.getMember().getName(); //Lazy 강제 초기화
-            order.getMember().getAddress(); //Lazy 강제 초기
+            order.getMember().getAddress(); //Lazy 강제 초기화
         }
         return all;
     }
@@ -54,6 +54,15 @@ public class OrderSimpleApiController {
     // order -> member 지연 로딩 조회 N번 (여기선 2번)
     // order -> delivery 지연 로딩 조회 N번 (여기선 2번)
     // 지연 로딩은 영속성 컨텍스트에서(바로 디비 쿼리X) 조회하므로, 이미 조회된 경우 쿼리를 생략한다.
+
+    @GetMapping("/api/v3/simple-orders")
+    public List<SimpleOrderDto> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery( );
+        List<SimpleOrderDto> result = orders.stream()
+                .map(o -> new SimpleOrderDto(o))
+                .collect(Collectors.toList());
+        return result;
+    }
     @Data
     static class SimpleOrderDto {
         private Long orderId;
@@ -70,4 +79,7 @@ public class OrderSimpleApiController {
             address = order.getDelivery().getAddress(); //LAZY 초기화
         }
     }
+    // 엔티티를 페치 조인을 사용해서 쿼리 1번에 조리
+    // 페치 조인으로 order -> member, order -> delivery는 이미 조회 된 상태이므로 지연로딩X
+    // 단점 : select에서 다 끌고 옴 -> 엔티티를 찍어서 조회하는 것의 단점
 }
