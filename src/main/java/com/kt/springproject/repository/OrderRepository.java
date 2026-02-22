@@ -2,6 +2,7 @@ package com.kt.springproject.repository;
 
 import com.kt.springproject.domain.Member;
 import com.kt.springproject.domain.Order;
+import com.kt.springproject.repository.order.simplequery.OrderSimpleQueryDto;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
@@ -100,4 +101,5 @@ public class OrderRepository {
                         "join fetch o.delivery d", Order.class
         ).getResultList();
     }
+
 }

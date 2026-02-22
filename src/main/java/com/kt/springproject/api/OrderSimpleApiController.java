@@ -5,6 +5,8 @@ import com.kt.springproject.domain.Order;
 import com.kt.springproject.domain.OrderStatus;
 import com.kt.springproject.repository.OrderRepository;
 import com.kt.springproject.repository.OrderSearch;
+import com.kt.springproject.repository.order.simplequery.OrderSimpleQueryDto;
+import com.kt.springproject.repository.order.simplequery.OrderSimpleQueryRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class OrderSimpleApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
 
     @GetMapping("/api/v1/simple-orders")
     public List<Order> ordersV1() {
@@ -63,23 +66,29 @@ public class OrderSimpleApiController {
                 .collect(Collectors.toList());
         return result;
     }
+
+    @GetMapping("/api/v4/simple-orders")
+    public List<OrderSimpleQueryDto> ordersV4() {
+        return orderSimpleQueryRepository.findOrderDtos();
+    }
+    // 엔티티를 페치 조인을 사용해서 쿼리 1번에 조리
+    // 페치 조인으로 order -> member, order -> delivery는 이미 조회 된 상태이므로 지연로딩X
+    // 단점 : select에서 다 끌고 옴 -> 엔티티를 찍어서 조회하는 것의 단점
+
     @Data
     static class SimpleOrderDto {
         private Long orderId;
         private String name;
-        private LocalDateTime orderDate;
+        private LocalDateTime orderDate; //주문시간
         private OrderStatus orderStatus;
         private Address address;
 
         public SimpleOrderDto(Order order) {
             orderId = order.getId();
-            name = order.getMember().getName(); //LAZY 초기화
+            name = order.getMember().getName();
             orderDate = order.getOrderDate();
             orderStatus = order.getStatus();
-            address = order.getDelivery().getAddress(); //LAZY 초기화
+            address = order.getDelivery().getAddress();
         }
     }
-    // 엔티티를 페치 조인을 사용해서 쿼리 1번에 조리
-    // 페치 조인으로 order -> member, order -> delivery는 이미 조회 된 상태이므로 지연로딩X
-    // 단점 : select에서 다 끌고 옴 -> 엔티티를 찍어서 조회하는 것의 단점
 }
